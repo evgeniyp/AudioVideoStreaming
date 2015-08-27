@@ -14,7 +14,7 @@ namespace ConsoleExample
         private AVFrame* frame;
         private AVPacket pkt;
         private SwsContext* sws_context;
-        private int i;
+        int i;
 
         public H264Encoder(int width, int height, int fps)
         {
@@ -24,7 +24,7 @@ namespace ConsoleExample
             codec_context = FFmpegInvoke.avcodec_alloc_context3(codec);
             if (codec_context == null) throw new Exception("Could not allocate video codec context");
 
-            codec_context->bit_rate = 400000;
+            codec_context->bit_rate = 4000000;
             codec_context->width = width;
             codec_context->height = height;
             codec_context->time_base = new AVRational() { num = 1, den = fps };
@@ -47,7 +47,7 @@ namespace ConsoleExample
             sws_context = FFmpegInvoke.sws_getContext(width, height, AVPixelFormat.AV_PIX_FMT_RGB24, width, height, AVPixelFormat.AV_PIX_FMT_YUV420P, 0, null, null, null);
         }
 
-        public byte[] EncodeFrame(byte[] rgb)
+        public byte[] EncodeFrame(IntPtr rgb)
         {
             fixed (AVPacket* packet = &pkt)
             {
@@ -57,22 +57,23 @@ namespace ConsoleExample
                 pkt.data = null;    // packet data will be allocated by the encoder
                 pkt.size = 0;
 
-                // TODO: convert rgb to YCbCr
+                //FFmpegInvoke.sws_scale(sws_context, (byte**)&rgb, frame->linesize, 0, frame->height, &(frame)->data_0, frame->linesize);
 
                 #region dummy image
                 i++;
-                /* Y */
+                // Y
                 for (int y = 0; y < codec_context->height; y++)
                     for (int x = 0; x < codec_context->width; x++)
-                        frame->data_0[y * frame->linesize[0] + x] = (byte)(x + y + i * 3);
+                        frame->data_0[y * frame->linesize[0] + x] = ((byte*)rgb)[3 * (640* y + x)];
+                        //frame->data_0[y * frame->linesize[0] + x] = (byte)(x + y + i * 3);
 
-                /* Cb and Cr */
-                for (int y = 0; y < codec_context->height / 2; y++)
-                    for (int x = 0; x < codec_context->width / 2; x++)
-                    {
-                        frame->data_1[y * frame->linesize[1] + x] = (byte)(128 + y + i * 2);
-                        frame->data_2[y * frame->linesize[2] + x] = (byte)(64 + x + i * 5);
-                    }
+                //// Cb and Cr
+                //for (int y = 0; y < codec_context->height / 2; y++)
+                //    for (int x = 0; x < codec_context->width / 2; x++)
+                //    {
+                //        frame->data_1[y * frame->linesize[1] + x] = (byte)(128 + y + i * 2);
+                //        frame->data_2[y * frame->linesize[2] + x] = (byte)(64 + x + i * 5);
+                //    }
                 #endregion
 
                 var ret = FFmpegInvoke.avcodec_encode_video2(codec_context, packet, frame, &got_output);
@@ -80,7 +81,7 @@ namespace ConsoleExample
 
                 if (got_output != 0)
                 {
-                    Console.WriteLine("Write frame {0}, size={1}", i, pkt.size);
+                    Console.WriteLine("Write frame size={0}", pkt.size);
                     byte[] arr = new byte[pkt.size];
                     Marshal.Copy((IntPtr)pkt.data, arr, 0, pkt.size);
                     FFmpegInvoke.av_free_packet(packet);

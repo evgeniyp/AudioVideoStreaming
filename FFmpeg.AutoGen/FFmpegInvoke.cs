@@ -6383,6 +6383,10 @@ namespace FFmpeg.AutoGen
 		// Func<AVClass*>
 		[DllImport(SWSCALE_LIBRARY, EntryPoint="sws_get_class", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		public static extern AVClass* sws_get_class();
-		
-	}
+
+        public static void sws_scale(SwsContext* sws_context, byte* unmanagedPointer, int* linesize1, int v1, int height, byte** v2, int* linesize2)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
