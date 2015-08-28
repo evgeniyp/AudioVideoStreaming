@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FFmpeg.AutoGen", "FFmpeg.Au
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleExample", "ConsoleExample\ConsoleExample.csproj", "{C73D3113-3EC0-4732-AAF5-EABA88F9A8A0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Robodem.Streaming", "Robodem.Streaming\Robodem.Streaming.csproj", "{A3C5FE36-971B-40DF-B70E-D8FB9AE4CD47}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{C73D3113-3EC0-4732-AAF5-EABA88F9A8A0}.Release|x64.Build.0 = Release|Any CPU
 		{C73D3113-3EC0-4732-AAF5-EABA88F9A8A0}.Release|x86.ActiveCfg = Release|Any CPU
 		{C73D3113-3EC0-4732-AAF5-EABA88F9A8A0}.Release|x86.Build.0 = Release|Any CPU
+		{A3C5FE36-971B-40DF-B70E-D8FB9AE4CD47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3C5FE36-971B-40DF-B70E-D8FB9AE4CD47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3C5FE36-971B-40DF-B70E-D8FB9AE4CD47}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A3C5FE36-971B-40DF-B70E-D8FB9AE4CD47}.Debug|x64.Build.0 = Debug|Any CPU
+		{A3C5FE36-971B-40DF-B70E-D8FB9AE4CD47}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A3C5FE36-971B-40DF-B70E-D8FB9AE4CD47}.Debug|x86.Build.0 = Debug|Any CPU
+		{A3C5FE36-971B-40DF-B70E-D8FB9AE4CD47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3C5FE36-971B-40DF-B70E-D8FB9AE4CD47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3C5FE36-971B-40DF-B70E-D8FB9AE4CD47}.Release|x64.ActiveCfg = Release|Any CPU
+		{A3C5FE36-971B-40DF-B70E-D8FB9AE4CD47}.Release|x64.Build.0 = Release|Any CPU
+		{A3C5FE36-971B-40DF-B70E-D8FB9AE4CD47}.Release|x86.ActiveCfg = Release|Any CPU
+		{A3C5FE36-971B-40DF-B70E-D8FB9AE4CD47}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

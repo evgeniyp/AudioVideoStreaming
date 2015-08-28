@@ -101,8 +101,11 @@
       <Project>{a536b02a-b0b1-4753-8328-17369ef09976}</Project>
       <Name>FFmpeg.AutoGen</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Robodem.Streaming\Robodem.Streaming.csproj">
+      <Project>{a3c5fe36-971b-40df-b70e-d8fb9ae4cd47}</Project>
+      <Name>Robodem.Streaming</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

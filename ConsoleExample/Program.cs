@@ -1,44 +1,48 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using FFmpeg.AutoGen;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Drawing;
 using AForge.Video.DirectShow;
+using System.Net.Sockets;
+using System.Net;
+using Robodem.Streaming;
+using Robodem.Streaming.Video;
+using FFmpeg.AutoGen;
 
 namespace ConsoleExample
 {
     class Program
     {
-        static unsafe void Main(string[] args)
+        static void Main(string[] args)
         {
-            string ffmpegPath = string.Format(@"ffmpeg/{0}", Environment.Is64BitProcess ? "x64" : "x86");
-            InteropHelper.RegisterLibrariesSearchPath(ffmpegPath);
-
-            FFmpegInvoke.av_register_all();
-            FFmpegInvoke.avcodec_register_all();
-            FFmpegInvoke.avformat_network_init();
-
-            H264Encoder encoder = new H264Encoder(640, 480, 25);
-
-            BinaryWriter writer = new BinaryWriter(File.Open("test.h264", FileMode.Create));
-
-            var videoDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
-            VideoCaptureDevice videoSource = new VideoCaptureDevice(videoDevices[0].MonikerString);
-            videoSource.NewFrame += (sender, eventArgs) =>
+            Init.Initialize();
+            using (VideoEncoder encoder = new VideoEncoder(640, 480, 50))
+            using (BinaryWriter writer = new BinaryWriter(File.Open("test.mpg", FileMode.Create)))
             {
-                eventArgs.Frame.Save("frame.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
-                writer.Write(encoder.EncodeFrame(BitmapPtr(eventArgs.Frame)));
-            };
-            videoSource.Start();
-            Console.ReadLine();
-            videoSource.SignalToStop();
-            encoder.Free();
+
+                Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                IPAddress broadcast = IPAddress.Parse("192.168.2.255");
+                IPEndPoint endPoint = new IPEndPoint(broadcast, 1234);
+
+                var videoDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
+                VideoCaptureDevice videoSource = new VideoCaptureDevice(videoDevices[0].MonikerString);
+                videoSource.NewFrame += (sender, eventArgs) =>
+                {
+                    var bytes = encoder.EncodeFrame(BitmapPtr(eventArgs.Frame));
+                    if (bytes != null && bytes.Length > 0)
+                    {
+                        writer.Write(bytes);
+                        s.SendTo(bytes, endPoint);
+                    }
+                };
+                videoSource.Start();
+                Console.ReadLine();
+                videoSource.SignalToStop();
+            }
         }
 
-        static IntPtr BitmapPtr(Bitmap bmp)
+        // .\ffplay.exe -i -noinfbuf udp://192.168.2.255:1234
+
+        private static IntPtr BitmapPtr(Bitmap bmp)
         {
             Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
             System.Drawing.Imaging.BitmapData bmpData = bmp.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite, bmp.PixelFormat);

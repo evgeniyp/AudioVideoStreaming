@@ -40,6 +40,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Init.cs" />
     <Compile Include="InteropHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FFmpegInvoke.cs" />
