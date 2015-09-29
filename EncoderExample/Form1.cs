@@ -1,15 +1,14 @@
 ﻿using AForge.Video.DirectShow;
 using System.Drawing;
 using System.Windows.Forms;
-using Robodem.Streaming;
 using Robodem.Streaming.Video;
 using FFmpeg.AutoGen;
-using System.IO;
 using System.Net.Sockets;
 using System.Net;
 using System;
+using System.IO;
 
-namespace WinFormsExample
+namespace EncoderExample
 {
     public partial class Form1 : Form
     {
@@ -39,18 +38,27 @@ namespace WinFormsExample
         {
             this.Invoke((MethodInvoker)delegate
             {
-                if (pictureBox1.Image != null)
-                    pictureBox1.Image.Dispose();
-                pictureBox1.Image = eventArgs.Frame.Clone(new Rectangle(0, 0, eventArgs.Frame.Width, eventArgs.Frame.Height), System.Drawing.Imaging.PixelFormat.DontCare);
+                if (pictureBox1.Image != null) { pictureBox1.Image.Dispose(); }
+                pictureBox1.Image = eventArgs.Frame.Clone(new Rectangle(0, 0, eventArgs.Frame.Width, eventArgs.Frame.Height),  System.Drawing.Imaging.PixelFormat.Format24bppRgb);
 
-                var bytes = _encoder.EncodeFrame(BitmapPtr(eventArgs.Frame));
-                if (bytes != null && bytes.Length > 0)
+                try
                 {
-                    _writer.Write(bytes);
-                    _socket.SendTo(bytes, _endPoint);
+                    Rectangle rect = new Rectangle(0, 0, eventArgs.Frame.Width, eventArgs.Frame.Height);
+                    System.Drawing.Imaging.BitmapData bmpData = eventArgs.Frame.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite, eventArgs.Frame.PixelFormat);
+                    IntPtr ptr = bmpData.Scan0;
+                    var bytes = _encoder.EncodeFrame(ptr);
+                    eventArgs.Frame.UnlockBits(bmpData);
+                    if (bytes != null && bytes.Length > 0)
+                    {
+                        _writer.Write(bytes);
+                        _socket.SendTo(bytes, _endPoint);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
                 }
             });
-
         }
 
         private static IntPtr BitmapPtr(Bitmap bmp)

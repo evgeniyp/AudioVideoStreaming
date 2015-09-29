@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace WinFormsExample
+namespace EncoderExample
 {
     static class Program
     {
