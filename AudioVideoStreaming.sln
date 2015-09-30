@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EncoderExample", "EncoderEx
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DecoderExample", "DecoderExample\DecoderExample.csproj", "{63105C64-7EF6-4104-A4D1-136A064D4AAA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloWorld", "HelloWorld\HelloWorld.csproj", "{F369B170-EE5A-4B5B-B501-F2F2AFDD608F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{2F7AE892-AF01-457E-B4BA-93D73EC15296}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,8 +73,25 @@ Global
 		{63105C64-7EF6-4104-A4D1-136A064D4AAA}.Release|x64.Build.0 = Release|Any CPU
 		{63105C64-7EF6-4104-A4D1-136A064D4AAA}.Release|x86.ActiveCfg = Release|Any CPU
 		{63105C64-7EF6-4104-A4D1-136A064D4AAA}.Release|x86.Build.0 = Release|Any CPU
+		{F369B170-EE5A-4B5B-B501-F2F2AFDD608F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F369B170-EE5A-4B5B-B501-F2F2AFDD608F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F369B170-EE5A-4B5B-B501-F2F2AFDD608F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F369B170-EE5A-4B5B-B501-F2F2AFDD608F}.Debug|x64.Build.0 = Debug|Any CPU
+		{F369B170-EE5A-4B5B-B501-F2F2AFDD608F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F369B170-EE5A-4B5B-B501-F2F2AFDD608F}.Debug|x86.Build.0 = Debug|Any CPU
+		{F369B170-EE5A-4B5B-B501-F2F2AFDD608F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F369B170-EE5A-4B5B-B501-F2F2AFDD608F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F369B170-EE5A-4B5B-B501-F2F2AFDD608F}.Release|x64.ActiveCfg = Release|Any CPU
+		{F369B170-EE5A-4B5B-B501-F2F2AFDD608F}.Release|x64.Build.0 = Release|Any CPU
+		{F369B170-EE5A-4B5B-B501-F2F2AFDD608F}.Release|x86.ActiveCfg = Release|Any CPU
+		{F369B170-EE5A-4B5B-B501-F2F2AFDD608F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F3207423-DDE0-4A14-B3E0-6D092149ED41} = {2F7AE892-AF01-457E-B4BA-93D73EC15296}
+		{63105C64-7EF6-4104-A4D1-136A064D4AAA} = {2F7AE892-AF01-457E-B4BA-93D73EC15296}
+		{F369B170-EE5A-4B5B-B501-F2F2AFDD608F} = {2F7AE892-AF01-457E-B4BA-93D73EC15296}
 	EndGlobalSection
 EndGlobal
