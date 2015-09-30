@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using Robodem.Streaming.Video;
@@ -18,6 +13,7 @@ namespace DecoderExample
     {
         private VideoDecoder _decoder;
         private AVPacket _avPacket;
+        private VideoConverter _converter;
 
         private Socket _socket;
         private EndPoint _endPoint;
@@ -32,6 +28,7 @@ namespace DecoderExample
 
             _decoder = new VideoDecoder();
             _avPacket = new AVPacket();
+            _converter = new VideoConverter(AVPixelFormat.AV_PIX_FMT_RGB24);
 
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             _endPoint = new IPEndPoint(IPAddress.Any, 1234);
@@ -56,7 +53,9 @@ namespace DecoderExample
                     AVFrame* pFrame;
                     if (_decoder.TryDecode(ref _avPacket, out pFrame))
                     {
-
+                        byte[] data = _converter.ConvertFrame(pFrame);
+                        var bitmap = VideoHelper.CreateBitmap(data, pFrame->width, pFrame->height);
+                        UpdateImage(bitmap);
                     }
                 }
             }
@@ -70,6 +69,11 @@ namespace DecoderExample
                 Bitmap clone = (Bitmap)bitmap.Clone();
                 pictureBox1.Image = clone;
             });
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            _socketThread.Abort();
         }
     }
 }

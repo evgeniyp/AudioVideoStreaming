@@ -26,6 +26,7 @@ namespace EncoderExample
             _encoder = new VideoEncoder(640, 480, 50);
             _writer = new BinaryWriter(File.Open("test.mpg", FileMode.Create));
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            //_endPoint = new IPEndPoint(IPAddress.Parse("192.168.2.255"), 1234);
             _endPoint = new IPEndPoint(IPAddress.Parse("192.168.2.255"), 1234);
 
             var videoDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);

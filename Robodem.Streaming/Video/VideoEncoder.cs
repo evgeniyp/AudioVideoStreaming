@@ -6,16 +6,22 @@ namespace Robodem.Streaming.Video
 {
     public unsafe sealed class VideoEncoder : DisposableBase
     {
-        private const AVCodecID CodecId = AVCodecID.AV_CODEC_ID_MPEG2VIDEO;
+        private const AVCodecID CODEC_ID = AVCodecID.AV_CODEC_ID_MPEG2VIDEO;
+        private const AVPixelFormat CODEC_PIXEL_FORMAT = AVPixelFormat.AV_PIX_FMT_YUV420P;
+        private const AVPixelFormat INPUT_PIXEL_FORMAT = AVPixelFormat.AV_PIX_FMT_RGB24;
 
         private AVCodecContext* codec_context;
         private readonly AVFrame* avFrame;
+        private readonly AVFrame* avFrameInput;
         private AVPacket pkt;
-        int i;
+
+        private VideoConverter _converter;
 
         public VideoEncoder(int width, int height, int fps)
         {
-            AVCodec* codec = FFmpegInvoke.avcodec_find_encoder(CodecId);
+            _converter = new VideoConverter(CODEC_PIXEL_FORMAT);
+
+            AVCodec* codec = FFmpegInvoke.avcodec_find_encoder(CODEC_ID);
             if (codec == null) throw new Exception("Codec not found");
 
             codec_context = FFmpegInvoke.avcodec_alloc_context3(codec);
@@ -27,29 +33,42 @@ namespace Robodem.Streaming.Video
             codec_context->time_base = new AVRational() { num = 1, den = fps };
             codec_context->gop_size = 10; // emit one intra frame every ten frames
             codec_context->max_b_frames = 1;
-            codec_context->pix_fmt = AVPixelFormat.AV_PIX_FMT_YUV420P;
+            codec_context->pix_fmt = CODEC_PIXEL_FORMAT;
             FFmpegInvoke.av_opt_set(codec_context->priv_data, "preset", "fast", 0);
             if (FFmpegInvoke.avcodec_open2(codec_context, codec, null) < 0) throw new Exception("Could not open codec");
 
             avFrame = FFmpegInvoke.avcodec_alloc_frame();
             if (avFrame == null) throw new Exception("Could not allocate video frame");
-            avFrame->format = (int)codec_context->pix_fmt;
-            avFrame->width = codec_context->width;
-            avFrame->height = codec_context->height;
+            avFrame->format = (int)CODEC_PIXEL_FORMAT;
+            avFrame->width = width;
+            avFrame->height = height;
 
-            var ret1 = FFmpegInvoke.av_image_alloc(&avFrame->data_0, avFrame->linesize, codec_context->width, codec_context->height, codec_context->pix_fmt, 32);
+            var ret1 = FFmpegInvoke.av_image_alloc(&avFrame->data_0, avFrame->linesize, width, height, CODEC_PIXEL_FORMAT, 32);
             if (ret1 < 0) throw new Exception("Could not allocate raw picture buffer");
+
+            avFrameInput = FFmpegInvoke.avcodec_alloc_frame();
+            if (avFrameInput == null) throw new Exception("Could not allocate video frame");
+            avFrameInput->format = (int)INPUT_PIXEL_FORMAT;
+            avFrameInput->width = width;
+            avFrameInput->height = height;
+
+            //var ret2 = FFmpegInvoke.av_image_alloc(&avFrameInput->data_0, avFrameInput->linesize, width, height, INPUT_PIXEL_FORMAT, 32);
+            //if (ret2 < 0) throw new Exception("Could not allocate raw picture buffer");
         }
 
         public byte[] EncodeFrame(IntPtr rgb)
         {
             fixed (AVPacket* packet = &pkt)
             {
-                i++;
-
                 FFmpegInvoke.av_init_packet(packet);
                 pkt.data = null;
                 pkt.size = 0;
+
+                //avFrameInput->data_0 = (byte*)rgb;
+
+                //fixed (byte* d = _converter.ConvertFrame(avFrameInput))
+                //{
+                //    avFrame->data_0 = d;
 
                 // taking only red component
                 for (int y = 0; y < codec_context->height; y++)
@@ -81,6 +100,7 @@ namespace Robodem.Streaming.Video
                 }
                 else { return null; }
             }
+            //}
         }
 
         protected override void DisposeManaged() { }
@@ -92,8 +112,11 @@ namespace Robodem.Streaming.Video
             FFmpegInvoke.av_free(codec_context);
             FFmpegInvoke.av_freep(&avFrame->data_0);
 
-            AVFrame* yuvFrameOnStack = avFrame;
-            FFmpegInvoke.avcodec_free_frame(&yuvFrameOnStack);
+            AVFrame* avFrameOnStack = avFrame;
+            FFmpegInvoke.avcodec_free_frame(&avFrameOnStack);
+
+            AVFrame* avFrameConvertedOnStack = avFrame;
+            FFmpegInvoke.avcodec_free_frame(&avFrameConvertedOnStack);
         }
     }
 }
