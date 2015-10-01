@@ -31,7 +31,7 @@ namespace HelloWorld
             if (inFrame == null) throw new Exception("Could not allocate video frame");
             inFrame->width = bitmap.Width;
             inFrame->height = bitmap.Height;
-            inFrame->format = (int)AVPixelFormat.AV_PIX_FMT_BGR24;
+            inFrame->format = (int)AVPixelFormat.AV_PIX_FMT_RGB24;
 
 
             int ret1 = FFmpegInvoke.av_image_alloc(&inFrame->data_0, inFrame->linesize, bitmap.Width, bitmap.Height, AVPixelFormat.AV_PIX_FMT_BGR24, 32);
@@ -45,7 +45,8 @@ namespace HelloWorld
 
             fixed (byte* dataPointer = &arr[0])
             {
-                FFmpegInvoke.avpicture_fill((AVPicture*)inFrame, dataPointer, AVPixelFormat.AV_PIX_FMT_BGR24, bitmap.Width, bitmap.Height);
+                //FFmpegInvoke.avpicture_fill((AVPicture*)inFrame, dataPointer, AVPixelFormat.AV_PIX_FMT_BGR24, bitmap.Width, bitmap.Height);
+                FFmpegInvoke.avpicture_fill((AVPicture*)inFrame, (byte*)bmpData.Scan0, AVPixelFormat.AV_PIX_FMT_BGR24, bitmap.Width, bitmap.Height);
             }
 
             VideoConverter converterToYuv = new VideoConverter(AVPixelFormat.AV_PIX_FMT_YUV420P);
