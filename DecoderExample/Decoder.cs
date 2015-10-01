@@ -9,7 +9,7 @@ using FFmpeg.AutoGen;
 
 namespace DecoderExample
 {
-    public partial class Form1 : Form
+    public partial class Decoder : Form
     {
         private VideoDecoder _decoder;
         private AVPacket _avPacket;
@@ -20,7 +20,7 @@ namespace DecoderExample
         private Thread _socketThread;
         private byte[] _receiveBuffer = new byte[65536];
 
-        public Form1()
+        public Decoder()
         {
             InitializeComponent();
 
@@ -28,7 +28,7 @@ namespace DecoderExample
 
             _decoder = new VideoDecoder();
             _avPacket = new AVPacket();
-            _converter = new VideoConverter(AVPixelFormat.AV_PIX_FMT_RGB24);
+            _converter = new VideoConverter(AVPixelFormat.AV_PIX_FMT_BGR24);
 
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             _endPoint = new IPEndPoint(IPAddress.Any, 1234);

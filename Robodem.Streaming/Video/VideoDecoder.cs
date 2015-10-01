@@ -8,8 +8,8 @@ namespace Robodem.Streaming.Video
     {
         private const AVCodecID CodecId = AVCodecID.AV_CODEC_ID_MPEG2VIDEO;
 
-        private readonly AVCodecContext* codec_context;
-        private readonly AVFrame* avFrame;
+        private AVCodecContext* codec_context;
+        private AVFrame* avFrame;
 
         public VideoDecoder()
         {   
@@ -43,8 +43,7 @@ namespace Robodem.Streaming.Video
         {
             FFmpegInvoke.avcodec_close(codec_context);
 
-            AVFrame* frameOnStack = avFrame;
-            FFmpegInvoke.avcodec_free_frame(&frameOnStack);
+            fixed (AVFrame** p = &avFrame) { FFmpegInvoke.avcodec_free_frame(p); }
         }
     }
 }

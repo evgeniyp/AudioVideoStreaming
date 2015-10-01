@@ -10,7 +10,7 @@ using System.IO;
 
 namespace EncoderExample
 {
-    public partial class Form1 : Form
+    public partial class Encoder : Form
     {
         private VideoCaptureDevice _videoSource;
         private VideoEncoder _encoder;
@@ -18,7 +18,7 @@ namespace EncoderExample
         private Socket _socket;
         private IPEndPoint _endPoint;
 
-        public Form1()
+        public Encoder()
         {
             InitializeComponent();
 
@@ -37,10 +37,10 @@ namespace EncoderExample
 
         private void VideoSource_NewFrame(object sender, AForge.Video.NewFrameEventArgs eventArgs)
         {
-            this.Invoke((MethodInvoker)delegate
+            Invoke((MethodInvoker)delegate
             {
                 if (pictureBox1.Image != null) { pictureBox1.Image.Dispose(); }
-                pictureBox1.Image = eventArgs.Frame.Clone(new Rectangle(0, 0, eventArgs.Frame.Width, eventArgs.Frame.Height),  System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+                Bitmap clone = (Bitmap)eventArgs.Frame.Clone();
 
                 try
                 {
@@ -59,6 +59,8 @@ namespace EncoderExample
                 {
                     Console.WriteLine(e.Message);
                 }
+
+                pictureBox1.Image = clone;
             });
         }
 
